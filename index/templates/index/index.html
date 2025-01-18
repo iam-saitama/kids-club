@@ -143,16 +143,14 @@
         <p>Welcome to our preschool! We create a fun, safe, and engaging environment for children to grow and thrive. Explore our classes, meet our dedicated staff, and become part of our vibrant community.</p>
     </section>
     <section id="about" class="content">
-        <h2>About Us</h2>
-        <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
-
-        <!-- Displaying the phone number -->
-        {% if school.phone_number %}
-            <p>For more information, feel free to call us at <a href="tel:+{{ school.phone_number }}">{{ school.phone_number }}</a></p>
-        {% else %}
-            <p>Contact information will be available soon.</p>
-        {% endif %}
-    </section>
+    <h2>About Us</h2>
+    <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
+    {% if school_number %}
+        <p>School Number: {{ school_number.school_number }}</p>
+    {% else %}
+        <p>School number not available.</p>
+    {% endif %}
+</section>
     <section id="classes" class="content">
         <h2>Our Classes</h2>
         <ul class="class-list">

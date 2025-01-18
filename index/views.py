@@ -19,18 +19,18 @@ def home(request):
 
 def about(request):
     classes = SchoolClass.objects.all()
-    school = SchoolNumber.objects.first()  # Get the first school instance (or adjust based on your logic)
+    school_number = SchoolNumber.objects.first()  # Get the first school instance (or adjust based on your logic)
 
     # If the form is submitted (POST request)
     if request.method == 'POST':
-        form = PhoneNumberForm(request.POST, instance=school)
+        form = PhoneNumberForm(request.POST, instance=school_number)
         if form.is_valid():
             form.save()
             return redirect('about')  # Redirect to about page after saving
     else:
-        form = PhoneNumberForm(instance=school)  # Show form with existing data (if any)
+        form = PhoneNumberForm(instance=school_number)  # Show form with existing data (if any)
 
-    return render(request, 'index/about.html', {'classes': classes, 'form': form, 'school': school})
+    return render(request, 'index/about.html', {'classes': classes, 'form': form, 'school': school_number})
 
 
 # Занятия
