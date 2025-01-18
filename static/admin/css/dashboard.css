@@ -1,4 +1,9 @@
 /* DASHBOARD */
+.dark-phone:hover {
+    color: #111; /* Slightly darker color on hover */
+    text-decoration: underline; /* Underline on hover */
+}
+
 .dashboard td, .dashboard th {
     word-break: break-word;
 }

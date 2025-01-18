@@ -1,5 +1,21 @@
 from django import forms
+from .models import ClassSchedule
 from .models import Contact, SchoolNumber
+
+class ClassScheduleForm(forms.ModelForm):
+    class Meta:
+        model = ClassSchedule
+        fields = ['school_class', 'hour', 'minute', 'day_of_week']
+
+    # Override the widgets for hour and minute
+    hour = forms.ChoiceField(
+        choices=ClassSchedule.HOUR_CHOICES,
+        widget=forms.Select,
+    )
+    minute = forms.ChoiceField(
+        choices=ClassSchedule.MINUTE_CHOICES,
+        widget=forms.Select,
+    )
 
 class PhoneNumberForm(forms.ModelForm):
     class Meta:

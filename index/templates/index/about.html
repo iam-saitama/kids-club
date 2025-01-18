@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -146,7 +148,8 @@
     <h2>About Us</h2>
     <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
     {% if school_number %}
-        <p>School Number: {{ school_number.school_number }}</p>
+        <!-- Make the school number clickable and dark -->
+        <p>School Number: <a href="tel:{{ school_number.school_number }}" class="dark-phone">{{ school_number.school_number }}</a></p>
     {% else %}
         <p>School number not available.</p>
     {% endif %}

@@ -59,21 +59,24 @@
             background: #577590;
         }
 
-        /* Main Content */
+        /* Main Content - Slightly Lighter Section Background */
         section.content {
             padding: 2rem;
             margin: 1rem auto;
             max-width: 800px;
-            background: #f8f9fa;
+            background: #666; /* Slightly lighter background */
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            color: #fff; /* Adjust text color for better contrast */
         }
         section.content h2 {
-            color: #577590;
+            color: #f9c74f; /* Highlighted heading color */
         }
-        section.content ul.class-list {
-            padding-left: 1rem;
-            list-style-type: disc;
+        section.content a {
+            color: #90be6d; /* Adjust link color */
+        }
+        section.content a:hover {
+            color: #43aa8b; /* Hover effect for links */
         }
 
         /* Contact Form */
@@ -134,28 +137,29 @@
     </header>
     <nav class="navbar">
         <a class="nav-link" href="{% url 'home' %}">Home</a>
-        <a class="nav-link" href="{% url 'about' %}">About Us</a>
+        <a class="nav-link" href="#about">About Us</a>
         <a class="nav-link" href="#classes">Classes</a>
         <a class="nav-link" href="#contact">Contact Us</a>
     </nav>
-    <section id="home" class="content">
-        <h2>Home</h2>
-        <p>Welcome to our preschool! We create a fun, safe, and engaging environment for children to grow and thrive. Explore our classes, meet our dedicated staff, and become part of our vibrant community.</p>
-    </section>
     <section id="about" class="content">
-    <h2>About Us</h2>
-    <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
-    {% if school_number %}
-        <p>School Number: {{ school_number.school_number }}</p>
-    {% else %}
-        <p>School number not available.</p>
-    {% endif %}
-</section>
+        <h2>About Us</h2>
+        <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
+        {% if school_number %}
+            <p>School Number: <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a></p>
+        {% else %}
+            <p>School number not available.</p>
+        {% endif %}
+    </section>
     <section id="classes" class="content">
         <h2>Our Classes</h2>
         <ul class="class-list">
             {% for class in classes %}
-                <li class="class-item"><strong>{{ class.name }}</strong>: {{ class.description }}</li>
+                <li class="class-item">
+                    <strong>{{ class.name }}</strong>:
+                    {{ class.age }} years old,
+                    <strong>Day:</strong> {{ class.get_day_of_week_display }},
+                    <strong>Time:</strong> {{ class.time|time:"H:i" }}
+                </li>
             {% endfor %}
         </ul>
     </section>
@@ -181,7 +185,7 @@
         {% endif %}
     </section>
     <footer class="footer">
-        <p>&copy; 2025 Our Preschool. All Rights Reserved. | Contact us at <a href="tel:+{{ school.phone_number }}">{{ school.phone_number }}</a></p>
+        <p>&copy; 2025 Our Preschool. All Rights Reserved. | Contact us at <a href="tel:+{{ school_number }}">{{ school_number }}</a></p>
     </footer>
 </body>
 </html>
