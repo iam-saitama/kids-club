@@ -9,34 +9,24 @@ from .models import SchoolClass, SchoolNumber
 # Главная страница
 def home(request):
     classes = SchoolClass.objects.all()
-    return render(request, 'index/index.html',{'classes': classes})
+    school_number = SchoolNumber.objects.get(pk=1)
+    return render(request, 'index/index.html',{'classes': classes, 'school_number': school_number})
 
 
 # О нас
-# def about(request):
-#     classes = SchoolClass.objects.all()
-#     return render(request, 'index/about.html', {'classes': classes})
-
 def about(request):
-    classes = SchoolClass.objects.all()
-    school_number = SchoolNumber.objects.first()  # Get the first school instance (or adjust based on your logic)
+    try:
+        school_number = SchoolNumber.objects.get(pk=1)  # Adjust this to your actual query
+    except SchoolNumber.DoesNotExist:
+        school_number = None  # If no entry exists
 
-    # If the form is submitted (POST request)
-    if request.method == 'POST':
-        form = PhoneNumberForm(request.POST, instance=school_number)
-        if form.is_valid():
-            form.save()
-            return redirect('about')  # Redirect to about page after saving
-    else:
-        form = PhoneNumberForm(instance=school_number)  # Show form with existing data (if any)
-
-    return render(request, 'index/about.html', {'classes': classes, 'form': form, 'school': school_number})
+    return render(request, 'index/about.html', {'school_number': school_number})
 
 
 # Занятия
 def school_classes(request):
     classes = SchoolClass.objects.all()
-    return render(request, 'index/about.html', {'classes': classes})
+    return render(request, 'index/classes.html', {'classes': classes})
 
 
 # Оставить заявку
