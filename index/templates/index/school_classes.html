@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Our Preschool</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            margin-bottom: 0.5rem;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        /* Header Section */
+        header.header {
+            background: #f9c74f;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        header.header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        header.header p {
+            font-size: 1.2rem;
+        }
+
+        /* Navigation */
+        nav.navbar {
+            background: #90be6d;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+        nav.navbar a.nav-link {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            background: #43aa8b;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        nav.navbar a.nav-link:hover {
+            background: #577590;
+        }
+
+        /* Main Content */
+        section.content {
+            padding: 2rem;
+            margin: 1rem auto;
+            max-width: 800px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        section.content h2 {
+            color: #577590;
+        }
+        section.content ul.class-list {
+            padding-left: 1rem;
+            list-style-type: disc;
+        }
+
+        /* Contact Form */
+        form.contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        form.contact-form input.input-field,
+        form.contact-form button.submit-button {
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        form.contact-form input.input-field:focus {
+            border-color: #90be6d;
+            outline: none;
+            box-shadow: 0 0 5px rgba(144, 190, 109, 0.5);
+        }
+        form.contact-form button.submit-button {
+            background: #577590;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        form.contact-form button.submit-button:hover {
+            background: #355070;
+        }
+
+        /* Footer */
+        footer.footer {
+            text-align: center;
+            padding: 1rem;
+            background: #577590;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            section.content {
+                padding: 1rem;
+            }
+            header.header h1 {
+                font-size: 2rem;
+            }
+            header.header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Welcome to Our Preschool</h1>
+        <p>Where Little Minds Grow Big Dreams!</p>
+    </header>
+    <nav class="navbar">
+        <a class="nav-link" href="{% url 'home' %}">Home</a>
+        <a class="nav-link" href="{% url 'about' %}">About Us</a>
+        <a class="nav-link" href="#classes">Classes</a>
+        <a class="nav-link" href="#contact">Contact Us</a>
+    </nav>
+    <section id="home" class="content">
+        <h2>Home</h2>
+        <p>Welcome to our preschool! We create a fun, safe, and engaging environment for children to grow and thrive. Explore our classes, meet our dedicated staff, and become part of our vibrant community.</p>
+    </section>
+    <section id="about" class="content">
+        <h2>About Us</h2>
+        <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
+    </section>
+    <section id="classes" class="content">
+        <h2>Our Classes</h2>
+        <ul class="class-list">
+            {% for class in classes %}
+                <li class="class-item"><strong>{{ class.name }}</strong>: {{ class.description }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section id="contact" class="content">
+        <h2>Contact Us</h2>
+        <p>If you have any questions or would like to enroll your child, please fill out the form below:</p>
+        <form class="contact" method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+            <label for="name">Your Name:</label>
+            <input class="input-field" type="text" id="name" name="name" placeholder="Enter your name" required>
+
+            <label for="contact_number">Your Contact Number:</label>
+            <input class="input-field" type="text" id="contact_number" name="contact_number" placeholder="Enter your phone number" required>
+
+            <button class="submit-button" type="submit">Submit</button>
+        </form>
+        {% if messages %}
+            <ul class="messages-list">
+                {% for message in messages %}
+                    <li class="message-item">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+    <footer class="footer">
+        <p>&copy; 2025 Our Preschool. All Rights Reserved. | Contact us at (123) 456-7890</p>
+    </footer>
+</body>
+</html>
