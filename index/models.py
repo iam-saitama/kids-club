@@ -14,11 +14,11 @@ class SchoolClass(models.Model):
 
 # Телефон школы
 class SchoolNumber(models.Model):
-    name = models.CharField(max_length=255, default="Unknown")
-    phone_number = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
+    school_number = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.phone_number
+        return self.name
 
 
 # Заявка клиента

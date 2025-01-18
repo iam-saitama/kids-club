@@ -7,15 +7,15 @@ from django import forms
 class SchoolAdminForm(forms.ModelForm):
     class Meta:
         model = SchoolNumber
-        fields = ['name', 'phone_number']
+        fields = ['name', 'school_number']
 
 # Register the model with the admin interface
 class SchoolAdmin(admin.ModelAdmin):
     form = SchoolAdminForm
 
-admin.site.register(SchoolNumber, SchoolAdmin)
 
 
 # Register your models here.
 admin.site.register(SchoolClass)
+admin.site.register(SchoolNumber, SchoolAdmin)
 admin.site.register(Contact)

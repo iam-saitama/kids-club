@@ -4,7 +4,7 @@ from .models import Contact, SchoolNumber
 class PhoneNumberForm(forms.ModelForm):
     class Meta:
         model = SchoolNumber
-        fields = ['phone_number']
+        fields = ['school_number']
 
 class ContactForm(forms.ModelForm):
     class Meta:

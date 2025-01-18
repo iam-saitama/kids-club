@@ -143,9 +143,14 @@
         <p>Welcome to our preschool! We create a fun, safe, and engaging environment for children to grow and thrive. Explore our classes, meet our dedicated staff, and become part of our vibrant community.</p>
     </section>
     <section id="about" class="content">
-        <h2>About Us</h2>
-        <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
-    </section>
+    <h2>About Us</h2>
+    <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
+    {% if school_number %}
+        <p>School Number: {{ school_number.school_number }}</p>
+    {% else %}
+        <p>School number not available.</p>
+    {% endif %}
+</section>
     <section id="classes" class="content">
         <h2>Our Classes</h2>
         <ul class="class-list">
@@ -157,7 +162,7 @@
     <section id="contact" class="content">
         <h2>Contact Us</h2>
         <p>If you have any questions or would like to enroll your child, please fill out the form below:</p>
-        <form class="contact" method="post" action="{% url 'contact' %}">
+        <form class="contact-form" method="post" action="{% url 'contact' %}">
             {% csrf_token %}
             <label for="name">Your Name:</label>
             <input class="input-field" type="text" id="name" name="name" placeholder="Enter your name" required>
@@ -176,7 +181,7 @@
         {% endif %}
     </section>
     <footer class="footer">
-        <p>&copy; 2025 Our Preschool. All Rights Reserved. | Contact us at (123) 456-7890</p>
+        <p>&copy; 2025 Our Preschool. All Rights Reserved. | Contact us at <a href="tel:+{{ school.phone_number }}">{{ school.phone_number }}</a></p>
     </footer>
 </body>
 </html>
