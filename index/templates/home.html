@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Почемучка Kids Club</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header class="header">
+    <div class="header-content">
+        <h1>ДОШКОЛЬНОЕ ОБРАЗОВАНИЕ</h1>
+        <p>Добро пожаловать в Kids Club!</p>
+    </div>
+    </header>
+    <nav class="navbar">
+        <a class="nav-link" href="{% url 'home' %}">Главная</a>
+        <a class="nav-link" href="#about">О нас</a>
+        <a class="nav-link" href="#classes">Наши занятия</a>
+        <a class="nav-link" href="#contact">Связаться с нами</a>
+    </nav>
+    <section id="about" class="content">
+        <h2>О нас</h2>
+        <p>Наша почемучка — это место, где дети обучаются через игру, любопытство и творчество. Благодаря небольшим группам и поддерживающей атмосфере мы гарантируем, что каждый ребенок получит внимание, которое он заслуживает!</p>
+        {% if school_number %}
+            <p>Номер телефона: <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a></p>
+        {% else %}
+            <p>School number not available.</p>
+        {% endif %}
+    </section>
+    <section id="classes" class="content">
+    <h2>Наши занятия</h2>
+    <ul class="class-list">
+        {% for class_instance in classes %}
+            <li class="class-item">
+                <strong>{{ class_instance.name }}</strong>: возраст от {{ class_instance.age }} лет
+                <ul class="schedule-list">
+                    {% if class_instance.schedule %}
+                        {% for day in class_instance.schedule %}
+                            <li>
+                                <strong>День:</strong> {{ day.day_of_week }},
+                                <strong>Время:</strong>
+                                {% if day.times %}
+                                    {% for time in day.times %}
+                                        {{ time.hour }}:{{ time.minute }}
+                                        {% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    Время не указано.
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li>Расписание еще не задано.</li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+    </section>
+    <section id="contact" class="content">
+    <h2>Связаться с нами</h2>
+    {% if school_number %}
+    <p>Звоните или напишите нам в телеграм по номеру:
+        <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a>
+    </p>
+    {% else %}
+    <p>Контактный номер телефона в настоящее время недоступен.</p>
+    {% endif %}
+    <p>Оставьте свой номер телефона и мы с Вами свяжемся</p>
+
+    <!-- Contact Form -->
+    <form class="contact-form" method="post" action="{% url 'contact' %}">
+    {% csrf_token %}
+
+    <!-- Name Field -->
+    <label for="name">Ваше имя:</label>
+    <input
+        class="input-field"
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Введите ваше имя"
+        required
+        oninput="validateName()"
+    >
+    <div id="name-error" class="error-message">Имя должно содержать только буквы.</div>
+
+    <!-- Phone Number Field -->
+    <label for="contact_number">Ваш номер телефона:</label>
+    <input
+        class="input-field"
+        type="text"
+        id="contact_number"
+        name="contact_number"
+        placeholder="Введите номер для связи"
+        required
+        oninput="validatePhoneNumber()"
+    >
+    <div id="phone-error" class="error-message">Неверный формат номера. Пожалуйста, используйте формат +998xxxxxxxxx.</div>
+
+    <!-- Submit Button -->
+    <button class="submit-button" type="submit">Отправить</button>
+    </form>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <ul class="messages-list">
+            {% for message in messages %}
+                <li class="message-item">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- Yandex Map -->
+    <div style="margin-top: 2rem;">
+        <h3>Наше местоположение</h3>
+        <div>
+            <script type="text/javascript" charset="utf-8" async
+                src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A273e77697932ffd4474249b58aa3d17f9d5bd6a860815c71c9cfa4c13955e332&amp;width=100%25&amp;height=400&amp;lang=en_FR&amp;scroll=true">
+            </script>
+        </div>
+    </div>
+    </section>
+
+    <script>
+    // Validate Name Field (Only Letters)
+    function validateName() {
+        var nameField = document.getElementById("name");
+        var nameError = document.getElementById("name-error");
+        var nameRegex = /^[A-Za-zА-Яа-я]+$/;
+
+        if (nameField.value.trim() === "") {
+            nameField.classList.remove("is-invalid");
+            nameError.style.display = "none";
+        } else if (!nameRegex.test(nameField.value)) {
+            nameField.classList.add("is-invalid");
+            nameError.style.display = "block";
+        } else {
+            nameField.classList.remove("is-invalid");
+            nameError.style.display = "none";
+        }
+    }
+
+    // Validate Phone Number Field (Uzbekistan Format)
+    function validatePhoneNumber() {
+        var phoneField = document.getElementById("contact_number");
+        var phoneError = document.getElementById("phone-error");
+        var phoneRegex = /^\+998\d{9}$/;
+
+        if (phoneField.value.trim() === "") {
+            phoneField.classList.remove("is-invalid");
+            phoneError.style.display = "none";
+        } else if (!phoneRegex.test(phoneField.value)) {
+            phoneField.classList.add("is-invalid");
+            phoneError.style.display = "block";
+        } else {
+            phoneField.classList.remove("is-invalid");
+            phoneError.style.display = "none";
+        }
+    }
+    </script>
+
+    <footer class="footer">
+        <p>&copy; 2025 Kids Cub. | Телефон: <a href="tel:+{{ school_number.school_number }}">{{ school_number.school_number }}</a></p>
+    </footer>
+</body>
+</html>
