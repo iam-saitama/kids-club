@@ -2,33 +2,21 @@ from django.db import models
 
 # Create your models here.
 
-
-# Занятия
-class SchoolClass(models.Model):
-    name = models.CharField(max_length=100)
-    age = models.PositiveIntegerField()
+# Название занятия/урока
+class ClassName(models.Model):
+    name = models.CharField("Название занятия", max_length=100)
+    age = models.PositiveIntegerField("Возраст")
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name} (Возраст от {self.age} лет)"
+
+    class Meta:
+        verbose_name = "Занятие"
+        verbose_name_plural = "Занятия"
 
 
-# Выбор дня недели
 class ClassSchedule(models.Model):
-    # Generate time choices for every hour from 00:00 to 23:00
-    HOUR_CHOICES = [(i, f"{str(i).zfill(2)}") for i in range(24)]
-
-    # Choices for minutes (0 to 59)
-    MINUTE_CHOICES = [(i, f"{str(i).zfill(2)}") for i in range(0, 60, 5)]  # Every 5 minutes
-
-    hour = models.IntegerField(
-        choices=HOUR_CHOICES,
-        default=0,
-    )
-    minute = models.IntegerField(
-        choices=MINUTE_CHOICES,
-        default=0,
-    )
-
+    # Выбор дня недели и времени
     DAYS_OF_WEEK = [
         ('Понедельник', 'Понедельник'),
         ('Вторник', 'Вторник'),
@@ -39,29 +27,71 @@ class ClassSchedule(models.Model):
         ('Воскресенье', 'Воскресенье'),
     ]
 
-    school_class = models.ForeignKey(SchoolClass, related_name='schedules', on_delete=models.CASCADE)
-    day_of_week = models.CharField(
-        max_length=11,
-        choices=DAYS_OF_WEEK,
+    HOUR_CHOICES = [(i, f'{i:02}') for i in range(7, 21)]  # Часы с 7 до 20
+    MINUTE_CHOICES = [(i, f'{i:02}') for i in range(0, 60, 15)]  # Каждые 15 минут
+
+    school_class = models.ForeignKey(
+        'ClassName',
+        related_name='schedule',
+        on_delete=models.CASCADE,
+        verbose_name="Занятие"
     )
+    day_of_week = models.CharField("День недели", max_length=20, choices=DAYS_OF_WEEK)
+    hour = models.PositiveIntegerField("Час", choices=HOUR_CHOICES)
+    minute = models.PositiveIntegerField("Минута", choices=MINUTE_CHOICES)
+
+    class Meta:
+        verbose_name = "Расписание занятий"
+        verbose_name_plural = "Расписание занятий"
+        unique_together = ['school_class', 'day_of_week', 'hour', 'minute']
+        ordering = ['day_of_week', 'hour', 'minute']
+
     def __str__(self):
-        return f"{self.school_class.name} - {self.hour}:{self.minute:02d} on {self.day_of_week}"
+        return f"{self.school_class.name} - {self.day_of_week} - {self.formatted_time()}"
+
+    def formatted_time(self):
+        # Возвращает строку в формате 'HH:MM'
+        return f"{str(self.hour).zfill(2)}:{str(self.minute).zfill(2)}"
+
+    def clean(self):
+        # Валидация расписания на уникальность
+        from django.core.exceptions import ValidationError
+        if ClassSchedule.objects.filter(
+            school_class=self.school_class,
+            day_of_week=self.day_of_week,
+            hour=self.hour,
+            minute=self.minute
+        ).exists():
+            raise ValidationError("Это время уже занято для данного занятия и дня недели.")
 
 
 # Телефон школы
 class SchoolNumber(models.Model):
-    name = models.CharField(max_length=100)
-    school_number = models.CharField(max_length=20)
+    name = models.CharField("Название школы", max_length=100)
+    school_number = models.CharField("Номер школы", max_length=20)
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Телефон школы"
+        verbose_name_plural = "Телефон школы"
 
 # Заявка клиента
 class Contact(models.Model):
-    name = models.CharField(max_length=100)
-    contact_number = models.CharField(max_length=15)
-    created_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField("Имя", max_length=100)
+    contact_number = models.CharField("Номер телефона", max_length=19, help_text="Format: +998(xx)xxx-xx-xx")
+    created_at = models.DateTimeField("Дата создания", auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # Добавляем +998
+        if not self.contact_number.startswith('+998'):
+            self.contact_number = '+998' + self.contact_number
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} ({self.contact_number})"
+
+    class Meta:
+        verbose_name = "Заявка клиента"
+        verbose_name_plural = "Заявки клиентов"

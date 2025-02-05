@@ -1,56 +1,45 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.urls import reverse
+from django.db.models import Prefetch
+from .models import ClassName, ClassSchedule, SchoolNumber
 from .forms import ContactForm
-from .models import SchoolClass, SchoolNumber, ClassSchedule
 
 
 # Create your views here.
 # Главная страница
 def home(request):
-    classes = SchoolClass.objects.all()
-    school_number = SchoolNumber.objects.filter(id=1).first()
-    return render(request, 'index/index.html',{'classes': classes, 'school_number': school_number})
+    # Получаем все занятия и их расписания
+    classes = ClassName.objects.prefetch_related(
+        Prefetch('schedule', queryset=ClassSchedule.objects.all(), to_attr='schedules')
+    )
 
+    # Получаем номер школы
+    school_number = SchoolNumber.objects.first()
 
-# О нас
-def about(request):
-    try:
-        school_number = SchoolNumber.objects.get(id=1)
-    except SchoolNumber.DoesNotExist:
-        school_number = None  # If no entry exists
-
-    return render(request, 'index/about.html', {'school_number': school_number})
-
-
-# Занятия
-def schedule_view(request):
-    class_schedules = ClassSchedule.objects.all()
-    school_number = SchoolNumber.objects.first()  # Get the first or specific SchoolNumber
-    return render(request, 'index/classes.html', {
-        'class_schedules': class_schedules,
-        'school_number': school_number
+    # Рендерим шаблон с контекстом
+    return render(request, 'home.html', {
+        'classes': classes,
+        'school_number': school_number,
     })
-
-
-# Занятия
-# def school_classes(request):
-#     classes = SchoolClass.objects.all()
-#     return render(request, 'index/classes.html', {'classes': classes})
 
 
 # Оставить заявку
 def contact(request):
-    classes = SchoolClass.objects.all()
-
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Заявка успешно отправлена!")
-            return redirect('contact')
+            return redirect(f"{reverse('home')}#contact")  # Перенаправление с якорем
         else:
-            messages.error(request, "В вашей заявке была ошибка.")
+            # Сохраняем ошибки формы в сообщениях
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{form.fields[field].label}: {error}")
+            return redirect(f"{reverse('home')}#contact")  # Перенаправление с якорем
     else:
         form = ContactForm()
 
-    return render(request, 'index/contact.html', {'form': form, 'classes': classes})
+    # Загружаем шаблон главной страницы с формой
+    return render(request, 'home.html', {'form': form})

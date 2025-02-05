@@ -3,167 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Дошкольное образование в Kids Club. Запишитесь на занятия для вашего ребенка.">
+    <meta name="keywords" content="Kids Club, дошкольное образование, занятия для детей, детский клуб">
+    <meta name="author" content="Kids Club">
     <title>Почемучка Kids Club</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <header class="header">
-    <div class="header-content">
-        <h1>ДОШКОЛЬНОЕ ОБРАЗОВАНИЕ</h1>
-        <p>Добро пожаловать в Kids Club!</p>
-    </div>
+        <div class="header-content">
+            <h1>ДОШКОЛЬНОЕ ОБРАЗОВАНИЕ</h1>
+            <p>Добро пожаловать в Kids Club</p>
+        </div>
     </header>
+
+    <!-- Навигация -->
     <nav class="navbar">
         <a class="nav-link" href="{% url 'home' %}">Главная</a>
         <a class="nav-link" href="#about">О нас</a>
         <a class="nav-link" href="#classes">Наши занятия</a>
+        <a class="nav-link" href="#map">Мы на карте</a>
         <a class="nav-link" href="#contact">Связаться с нами</a>
     </nav>
-    <section id="about" class="content">
-        <h2>О нас</h2>
-        <p>Наша почемучка — это место, где дети обучаются через игру, любопытство и творчество. Благодаря небольшим группам и поддерживающей атмосфере мы гарантируем, что каждый ребенок получит внимание, которое он заслуживает!</p>
-        {% if school_number %}
-            <p>Номер телефона: <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a></p>
-        {% else %}
-            <p>School number not available.</p>
-        {% endif %}
-    </section>
-    <section id="classes" class="content">
-    <h2>Наши занятия</h2>
-    <ul class="class-list">
-        {% for class_instance in classes %}
-            <li class="class-item">
-                <strong>{{ class_instance.name }}</strong>: возраст от {{ class_instance.age }} лет
-                <ul class="schedule-list">
-                    {% if class_instance.schedule %}
-                        {% for day in class_instance.schedule %}
-                            <li>
-                                <strong>День:</strong> {{ day.day_of_week }},
-                                <strong>Время:</strong>
-                                {% if day.times %}
-                                    {% for time in day.times %}
-                                        {{ time.hour }}:{{ time.minute }}
-                                        {% if not forloop.last %}, {% endif %}
-                                    {% endfor %}
-                                {% else %}
-                                    Время не указано.
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    {% else %}
-                        <li>Расписание еще не задано.</li>
-                    {% endif %}
-                </ul>
-            </li>
-        {% endfor %}
-    </ul>
-    </section>
-    <section id="contact" class="content">
-    <h2>Связаться с нами</h2>
-    {% if school_number %}
-    <p>Звоните или напишите нам в телеграм по номеру:
-        <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a>
-    </p>
-    {% else %}
-    <p>Контактный номер телефона в настоящее время недоступен.</p>
-    {% endif %}
-    <p>Оставьте свой номер телефона и мы с Вами свяжемся</p>
-
-    <!-- Contact Form -->
-    <form class="contact-form" method="post" action="{% url 'contact' %}">
-    {% csrf_token %}
-
-    <!-- Name Field -->
-    <label for="name">Ваше имя:</label>
-    <input
-        class="input-field"
-        type="text"
-        id="name"
-        name="name"
-        placeholder="Введите ваше имя"
-        required
-        oninput="validateName()"
-    >
-    <div id="name-error" class="error-message">Имя должно содержать только буквы.</div>
-
-    <!-- Phone Number Field -->
-    <label for="contact_number">Ваш номер телефона:</label>
-    <input
-        class="input-field"
-        type="text"
-        id="contact_number"
-        name="contact_number"
-        placeholder="Введите номер для связи"
-        required
-        oninput="validatePhoneNumber()"
-    >
-    <div id="phone-error" class="error-message">Неверный формат номера. Пожалуйста, используйте формат +998xxxxxxxxx.</div>
-
-    <!-- Submit Button -->
-    <button class="submit-button" type="submit">Отправить</button>
-    </form>
-
-    <!-- Display Messages -->
-    {% if messages %}
-        <ul class="messages-list">
-            {% for message in messages %}
-                <li class="message-item">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <!-- Yandex Map -->
-    <div style="margin-top: 2rem;">
-        <h3>Наше местоположение</h3>
-        <div>
-            <script type="text/javascript" charset="utf-8" async
-                src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A273e77697932ffd4474249b58aa3d17f9d5bd6a860815c71c9cfa4c13955e332&amp;width=100%25&amp;height=400&amp;lang=en_FR&amp;scroll=true">
-            </script>
-        </div>
-    </div>
-    </section>
-
+    <!-- JS чтоб навигация фиксировалась при прокрутке -->
     <script>
-    // Validate Name Field (Only Letters)
-    function validateName() {
-        var nameField = document.getElementById("name");
-        var nameError = document.getElementById("name-error");
-        var nameRegex = /^[A-Za-zА-Яа-я]+$/;
+        document.addEventListener("DOMContentLoaded", function () {
+            let navbar = document.querySelector(".navbar");
+            let header = document.querySelector("header");
+            let headerHeight = header.offsetHeight;
 
-        if (nameField.value.trim() === "") {
-            nameField.classList.remove("is-invalid");
-            nameError.style.display = "none";
-        } else if (!nameRegex.test(nameField.value)) {
-            nameField.classList.add("is-invalid");
-            nameError.style.display = "block";
-        } else {
-            nameField.classList.remove("is-invalid");
-            nameError.style.display = "none";
-        }
-    }
-
-    // Validate Phone Number Field (Uzbekistan Format)
-    function validatePhoneNumber() {
-        var phoneField = document.getElementById("contact_number");
-        var phoneError = document.getElementById("phone-error");
-        var phoneRegex = /^\+998\d{9}$/;
-
-        if (phoneField.value.trim() === "") {
-            phoneField.classList.remove("is-invalid");
-            phoneError.style.display = "none";
-        } else if (!phoneRegex.test(phoneField.value)) {
-            phoneField.classList.add("is-invalid");
-            phoneError.style.display = "block";
-        } else {
-            phoneField.classList.remove("is-invalid");
-            phoneError.style.display = "none";
-        }
-    }
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > headerHeight) {
+                    // Если проскроллили дальше хедера — закрепляем навигацию
+                    navbar.classList.add("fixed");
+                } else {
+                    // Если выше хедера — возвращаем в исходное состояние
+                    navbar.classList.remove("fixed");
+                }
+            });
+        });
     </script>
 
+    <main>
+        <!-- О нас -->
+        <section id="about" class="content">
+            <h2>О нас</h2>
+            <p class="intro-text">
+                <strong>Наша Почемучка</strong> — это уникальное место, где каждый ребенок может раскрыть свой потенциал через игру, любопытство и творчество. Мы уверены, что обучение должно быть увлекательным и вдохновляющим, поэтому создаем атмосферу, в которой детям интересно учиться.
+            </p>
+            <p>
+                В нашей дружелюбной атмосфере малыши чувствуют себя комфортно и уверенно, а благодаря небольшим группам каждый ребенок получает внимание и заботу, которые ему необходимы для роста и развития. Мы понимаем, что каждый ребенок — индивидуален, поэтому предлагаем также <strong>индивидуальные занятия</strong>, которые помогают еще больше углубиться в выбранные области и позволить каждому раскрыться в своем собственном ритме.
+            </p>
+            <p>
+                <strong>Наша цель</strong> — не только научить детей чему-то новому, но и подарить им радость от процесса обучения, развивая в них уверенность, любопытство и желание исследовать мир.
+            </p>
+
+            {% if school_number %}
+                <p class="contact-info">
+                    За консультацией пишите нам в <a href="https://t.me/{{ school_number.school_number }}">Телеграм</a> или звоните по номеру:
+                    <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a>
+                </p>
+            {% else %}
+                <p>Контактный номер телефона в настоящее время недоступен.</p>
+            {% endif %}
+        </section>
+
+        <!-- Наши занятия -->
+        <section id="classes" class="content">
+            <h2>Наши занятия</h2>
+            <ul class="class-list">
+                {% for class_instance in classes %}
+                    <li class="class-item">
+                        <strong>{{ class_instance.name }}</strong><br>Возраст от {{ class_instance.age }} лет
+                        <div class="schedule-table">
+                            {% if class_instance.schedules %}
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>День недели</th>
+                                            <th>Время</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for day in class_instance.schedules %}
+                                            <tr>
+                                                <td>{{ day.day_of_week }}</td>
+                                                <td>{{ day.hour|stringformat:"02d" }}:{{ day.minute|stringformat:"02d" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>Расписание еще не задано.</p>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <!-- Карта -->
+        <section id="map" class="map-content">
+            <h3>Наше местоположение</h3>
+            <div class="map-container">
+                <script type="text/javascript" charset="utf-8" async
+                    src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A273e77697932ffd4474249b58aa3d17f9d5bd6a860815c71c9cfa4c13955e332&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true">
+                </script>
+            </div>
+        </section>
+
+        <!-- Связаться с нами -->
+        <section id="contact" class="contact">
+            <h2>Связаться с нами</h2>
+            {% if school_number %}
+                <p>За консультацией пишите нам в <a href="https://t.me/{{ school_number.school_number }}">Телеграм</a> или звоните по номеру:
+                    <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a>
+                </p>
+            {% else %}
+                <p>Контактный номер телефона в настоящее время недоступен.</p>
+            {% endif %}
+            <p>Оставьте свой номер телефона, и мы с Вами свяжемся</p>
+
+            <!-- Форма для заявки клиента -->
+            <div class="form-container">
+                <form class="contact-form" method="post" action="{% url 'contact' %}">
+                    {% csrf_token %}
+
+                    <!-- Поле для имени -->
+                    <label for="name">Ваше имя:</label>
+                    <input class="input-field" type="text" id="name" name="name" placeholder="Введите ваше имя" required
+                           value="{{ form.name.value|default:'' }}">
+                    <!-- Сообщение об ошибке в имени -->
+                    {% if form.name.errors %}
+                        <div class="error-message">
+                            {% for error in form.name.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Поле для номера телефона -->
+                    <label for="contact_number">Ваш номер телефона:</label>
+                    <input class="input-field" type="text" id="contact_number" name="contact_number" required
+                           value="{{ form.contact_number.value|default:'' }}">
+                    <!-- Сообщение об ошибке в номере -->
+                    {% if form.contact_number.errors %}
+                        <div class="error-message">
+                            {% for error in form.contact_number.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Сообщение об успешной отправке -->
+                    {% if messages %}
+                        <ul class="messages-list">
+                            {% for message in messages %}
+                                <li class="message-item {% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <button class="submit-button" type="submit">Отправить</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
     <footer class="footer">
-        <p>&copy; 2025 Kids Cub. | Телефон: <a href="tel:+{{ school_number.school_number }}">{{ school_number.school_number }}</a></p>
+        <p>&copy; 2025 Kids Club</p>
     </footer>
+
+    <!-- JS для интерактивного поля заполнения номера телефона в заявке клиента -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var inputField = $('#contact_number');
+            inputField.mask('+998 (00) 000-00-00');
+            if (inputField.val() === '') {
+                inputField.val('+998 ');
+            }
+            inputField.on('input', function() {
+                if (!inputField.val().startsWith('+998 ')) {
+                    inputField.val('+998 ' + inputField.val().slice(5));
+                }
+            });
+        });
+    </script>
 </body>
 </html>

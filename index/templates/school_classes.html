@@ -1,187 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Our Preschool</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            line-height: 1.6;
-        }
-        h1, h2, h3 {
-            margin-bottom: 0.5rem;
-        }
-        p {
-            margin-bottom: 1rem;
-        }
-        a {
-            text-decoration: none;
-            color: #fff;
-        }
-
-        /* Header Section */
-        header.header {
-            background: #f9c74f;
-            color: #fff;
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-        header.header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-        }
-        header.header p {
-            font-size: 1.2rem;
-        }
-
-        /* Navigation */
-        nav.navbar {
-            background: #90be6d;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1rem;
-            flex-wrap: wrap;
-        }
-        nav.navbar a.nav-link {
-            font-size: 1rem;
-            padding: 0.5rem 1rem;
-            background: #43aa8b;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        nav.navbar a.nav-link:hover {
-            background: #577590;
-        }
-
-        /* Main Content */
-        section.content {
-            padding: 2rem;
-            margin: 1rem auto;
-            max-width: 800px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        section.content h2 {
-            color: #577590;
-        }
-        section.content ul.class-list {
-            padding-left: 1rem;
-            list-style-type: disc;
-        }
-
-        /* Contact Form */
-        form.contact-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        form.contact-form input.input-field,
-        form.contact-form button.submit-button {
-            padding: 0.8rem;
-            font-size: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        form.contact-form input.input-field:focus {
-            border-color: #90be6d;
-            outline: none;
-            box-shadow: 0 0 5px rgba(144, 190, 109, 0.5);
-        }
-        form.contact-form button.submit-button {
-            background: #577590;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        form.contact-form button.submit-button:hover {
-            background: #355070;
-        }
-
-        /* Footer */
-        footer.footer {
-            text-align: center;
-            padding: 1rem;
-            background: #577590;
-            color: white;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            section.content {
-                padding: 1rem;
-            }
-            header.header h1 {
-                font-size: 2rem;
-            }
-            header.header p {
-                font-size: 1rem;
-            }
-        }
-    </style>
+    <meta name="description" content="Дошкольное образование в Kids Club. Запишитесь на занятия для вашего ребенка.">
+    <meta name="keywords" content="Kids Club, дошкольное образование, занятия для детей, детский клуб">
+    <meta name="author" content="Kids Club">
+    <title>Почемучка Kids Club</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <header class="header">
-        <h1>Welcome to Our Preschool</h1>
-        <p>Where Little Minds Grow Big Dreams!</p>
+        <div class="header-content">
+            <h1>ДОШКОЛЬНОЕ ОБРАЗОВАНИЕ</h1>
+            <p>Добро пожаловать в Kids Club</p>
+        </div>
     </header>
+
+    <!-- Навигация -->
     <nav class="navbar">
-        <a class="nav-link" href="{% url 'home' %}">Home</a>
-        <a class="nav-link" href="{% url 'about' %}">About Us</a>
-        <a class="nav-link" href="#classes">Classes</a>
-        <a class="nav-link" href="#contact">Contact Us</a>
+        <a class="nav-link" href="{% url 'home' %}">Главная</a>
+        <a class="nav-link" href="#about">О нас</a>
+        <a class="nav-link" href="#classes">Наши занятия</a>
+        <a class="nav-link" href="#map">Мы на карте</a>
+        <a class="nav-link" href="#contact">Связаться с нами</a>
     </nav>
-    <section id="home" class="content">
-        <h2>Home</h2>
-        <p>Welcome to our preschool! We create a fun, safe, and engaging environment for children to grow and thrive. Explore our classes, meet our dedicated staff, and become part of our vibrant community.</p>
-    </section>
-    <section id="about" class="content">
-    <h2>About Us</h2>
-    <p>Our preschool is a place where children learn through play, curiosity, and creativity. With small class sizes and a supportive atmosphere, we ensure every child gets the attention they deserve.</p>
-    {% if school_number %}
-        <p>School Number: {{ school_number.school_number }}</p>
-    {% else %}
-        <p>School number not available.</p>
-    {% endif %}
-</section>
-    <section id="classes" class="content">
-        <h2>Our Classes</h2>
-        <ul class="class-list">
-            {% for class in classes %}
-                <li class="class-item"><strong>{{ class.name }}</strong>: {{ class.description }}</li>
-            {% endfor %}
-        </ul>
-    </section>
-    <section id="contact" class="content">
-        <h2>Contact Us</h2>
-        <p>If you have any questions or would like to enroll your child, please fill out the form below:</p>
-        <form class="contact-form" method="post" action="{% url 'contact' %}">
-            {% csrf_token %}
-            <label for="name">Your Name:</label>
-            <input class="input-field" type="text" id="name" name="name" placeholder="Enter your name" required>
+    <!-- JS чтоб навигация фиксировалась при прокрутке -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let navbar = document.querySelector(".navbar");
+            let header = document.querySelector("header"); // Хедер, над которым должна быть навигация
+            let headerHeight = header.offsetHeight; // Высота хедера
 
-            <label for="contact_number">Your Contact Number:</label>
-            <input class="input-field" type="text" id="contact_number" name="contact_number" placeholder="Enter your phone number" required>
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > headerHeight) {
+                    // Если проскроллили дальше хедера — закрепляем навигацию
+                    navbar.classList.add("fixed");
+                } else {
+                    // Если выше хедера — возвращаем в исходное состояние
+                    navbar.classList.remove("fixed");
+                }
+            });
+        });
+    </script>
 
-            <button class="submit-button" type="submit">Submit</button>
-        </form>
-        {% if messages %}
-            <ul class="messages-list">
-                {% for message in messages %}
-                    <li class="message-item">{{ message }}</li>
+    <main>
+        <!-- О нас -->
+        <section id="about" class="content">
+            <h2>О нас</h2>
+            <p class="intro-text">
+                <strong>Наша Почемучка</strong> — это уникальное место, где каждый ребенок может раскрыть свой потенциал через игру, любопытство и творчество. Мы уверены, что обучение должно быть увлекательным и вдохновляющим, поэтому создаем атмосферу, в которой детям интересно учиться.
+            </p>
+            <p>
+                В нашей дружелюбной атмосфере малыши чувствуют себя комфортно и уверенно, а благодаря небольшим группам каждый ребенок получает внимание и заботу, которые ему необходимы для роста и развития. Мы понимаем, что каждый ребенок — индивидуален, поэтому предлагаем также <strong>индивидуальные занятия</strong>, которые помогают еще больше углубиться в выбранные области и позволить каждому раскрыться в своем собственном ритме.
+            </p>
+            <p>
+                <strong>Наша цель</strong> — не только научить детей чему-то новому, но и подарить им радость от процесса обучения, развивая в них уверенность, любопытство и желание исследовать мир.
+            </p>
+
+            {% if school_number %}
+                <p class="contact-info">
+                    За консультацией пишите нам в <a href="https://t.me/{{ school_number.school_number }}">Телеграм</a> или звоните по номеру:
+                    <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a>
+                </p>
+            {% else %}
+                <p>Контактный номер телефона в настоящее время недоступен.</p>
+            {% endif %}
+        </section>
+
+        <!-- Наши занятия -->
+        <section id="classes" class="content">
+            <h2>Наши занятия</h2>
+            <ul class="class-list">
+                {% for class_instance in classes %}
+                    <li class="class-item">
+                        <strong>{{ class_instance.name }}</strong><br>Возраст от {{ class_instance.age }} лет
+                        <div class="schedule-table">
+                            {% if class_instance.schedules %}
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>День недели</th>
+                                            <th>Время</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for day in class_instance.schedules %}
+                                            <tr>
+                                                <td>{{ day.day_of_week }}</td>
+                                                <td>{{ day.hour|stringformat:"02d" }}:{{ day.minute|stringformat:"02d" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>Расписание еще не задано.</p>
+                            {% endif %}
+                        </div>
+                    </li>
                 {% endfor %}
             </ul>
-        {% endif %}
-    </section>
+        </section>
+
+        <!-- Карта -->
+        <section id="map" class="map-content">
+            <h3>Наше местоположение</h3>
+            <div class="map-container">
+                <script type="text/javascript" charset="utf-8" async
+                    src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A273e77697932ffd4474249b58aa3d17f9d5bd6a860815c71c9cfa4c13955e332&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true">
+                </script>
+            </div>
+        </section>
+
+        <!-- Связаться с нами -->
+        <section id="contact" class="contact">
+            <h2>Связаться с нами</h2>
+            {% if school_number %}
+                <p>За консультацией пишите нам в <a href="https://t.me/{{ school_number.school_number }}">Телеграм</a> или звоните по номеру:
+                    <a href="tel:{{ school_number.school_number }}">{{ school_number.school_number }}</a>
+                </p>
+            {% else %}
+                <p>Контактный номер телефона в настоящее время недоступен.</p>
+            {% endif %}
+            <p>Оставьте свой номер телефона, и мы с Вами свяжемся</p>
+
+            <!-- Форма для заявки клиента -->
+            <div class="form-container">
+                <form class="contact-form" method="post" action="{% url 'contact' %}">
+                    {% csrf_token %}
+
+                    <!-- Поле для имени -->
+                    <label for="name">Ваше имя:</label>
+                    <input class="input-field" type="text" id="name" name="name" placeholder="Введите ваше имя" required
+                           value="{{ form.name.value|default:'' }}">
+                    <!-- Сообщение об ошибке в имени -->
+                    {% if form.name.errors %}
+                        <div class="error-message">
+                            {% for error in form.name.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Поле для номера телефона -->
+                    <label for="contact_number">Ваш номер телефона:</label>
+                    <input class="input-field" type="text" id="contact_number" name="contact_number" required
+                           value="{{ form.contact_number.value|default:'' }}">
+                    <!-- Сообщение об ошибке в номере -->
+                    {% if form.contact_number.errors %}
+                        <div class="error-message">
+                            {% for error in form.contact_number.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Сообщение об успешной отправке -->
+                    {% if messages %}
+                        <ul class="messages-list">
+                            {% for message in messages %}
+                                <li class="message-item {% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <button class="submit-button" type="submit">Отправить</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
     <footer class="footer">
-        <p>&copy; 2025 Our Preschool. All Rights Reserved. | Contact us at <a href="tel:+{{ school.phone_number }}">{{ school.phone_number }}</a></p>
+        <p>&copy; 2025 Kids Club</p>
     </footer>
+
+    <!-- JS для интерактивного поля заполнения номера телефона в заявке клиента -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var inputField = $('#contact_number');
+            inputField.mask('+998 (00) 000-00-00');
+            if (inputField.val() === '') {
+                inputField.val('+998 ');
+            }
+            inputField.on('input', function() {
+                if (!inputField.val().startsWith('+998 ')) {
+                    inputField.val('+998 ' + inputField.val().slice(5));
+                }
+            });
+        });
+    </script>
 </body>
 </html>
